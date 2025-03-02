@@ -2,9 +2,9 @@
 # Meta --------------------------------------------------------------------
 
 ## Title:         CDC Tax Burden on Tobacco
-## Author:        Ian McCarthy
-## Date Created:  11/12/2019
-## Date Edited:   11/19/2019
+## Author:        Miracle Ephraim
+## Date Created:  02/24/2025
+## Date Edited:   02/26/2025
 ## Description:   Clean and analyze CDC data 
 
 
@@ -13,8 +13,8 @@ if (!require("pacman")) install.packages("pacman")
 pacman::p_load(tidyverse, ggplot2, dplyr, lubridate, stringr, readxl, data.table, gdata)
 
 
-cig.data <- read_csv("data/input/CDC_1970-2018.csv", col_names = TRUE)
-cpi.data <- read_xlsx("data/input/CPI_1913_2019.xlsx", skip = 11)
+cig.data <- read_csv("C:/Users/mirac/Documents/GitHub/econ470_ma/hw3/data/input/The_Tax_Burden_on_Tobacco__1970-2019.csv", col_names = TRUE)
+cpi.data <- read_xlsx("C:/Users/mirac/Documents/GitHub/econ470_ma/hw3/data/input/historical-cpi-u-202501.xlsx", skip = 3)
 
 
 # Clean tobacco data --------------------------------------------------------------
@@ -34,7 +34,7 @@ cig.data <- cig.data %>%
          measure)
          
 final.data <- pivot_wider(cig.data, 
-                         id_cols = c("state","Year","measure"),
+                        # id_cols = c("state","Year","measure"),
                          names_from = "measure",
                          values_from = "value") %>%
   arrange(state, Year)
@@ -42,23 +42,25 @@ final.data <- pivot_wider(cig.data,
 
 
 # Clean CPI data ----------------------------------------------------------
+cpi.data$Jan. <- as.character(cpi.data$Jan.)
 cpi.data <- pivot_longer(cpi.data, 
-                         cols=c("Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"),
+                         cols=c("Jan.","Feb.","Mar.","Apr.","May","Jun.","Jul.","Aug.","Sep.","Oct.","Nov.","Dec."),
                          names_to="month",
                          values_to="index")
-cpi.data <- cpi.data %>%
+cpi.data2 <- cpi.data %>%
+#  mutate(index <- as.numeric(index)) %>%
   group_by(Year) %>%
-  summarize(index=mean(index, na.rm=TRUE))
-
+  summarize(index=mean(as.numeric(index), na.rm=TRUE))
+cpi.data2$Year <- as.numeric(cpi.data2$Year)
 
 
 # Form final dataset ------------------------------------------------------
-# adjust to 2010 dollars
+# adjust to 2012 dollars
 final.data <- final.data %>%
-  left_join(cpi.data, by="Year") %>%
-  mutate(price_cpi=cost_per_pack*(218/index))
+  left_join(cpi.data2, by="Year") %>%
+  mutate(price_cpi=cost_per_pack*(230/index)) 
 
-write_tsv(final.data,"data/output/TaxBurden_Data.txt",append=FALSE,col_names=TRUE)
-write_rds(final.data,"data/output/TaxBurden_Data.rds")
+write_tsv(final.data,"C:/Users/mirac/Documents/GitHub/econ470_ma/hw3/data/output/TaxBurden_Data.txt",append=FALSE,col_names=TRUE)
+write_rds(final.data,"C:/Users/mirac/Documents/GitHub/econ470_ma/hw3/data/output/TaxBurden_Data.rds")
 
 
