@@ -9,13 +9,13 @@ hw3
 |   |---code
 |   |---analysis
 |   |---results
-|   |   mccarthy-m-hwk3-1.pdf
+|   |   ephraim-m-hwk3-1.pdf
 |
 |---submission2
 |   |---code
 |   |---analysis
 |   |---results
-|   |   mccarthy-m-hwk3-2.pdf
+|   |   ephraim-m-hwk3-2.pdf
 |
 |---submission3
 |   |---code

@@ -1,0 +1,147 @@
+---
+title: HW3
+author: Miracle Ephraim
+format:
+  pdf:
+    documentclass: article
+---
+
+```{r setup, include=FALSE}
+
+if (!require("pacman")) install.packages("pacman")
+pacman::p_load(tidyverse, ggplot2, dplyr, lubridate, stringr, readxl, data.table, gdata)
+library(readr)
+
+load("C:/Users/mirac/Documents/GitHub/econ470_ma/hw3/submission1/results/hw_workspace.Rdata")
+
+```
+
+# Question 1
+
+Present a bar graph showing the proportion of states with a change in their cigarette tax in each year from 1970 to 1985.
+
+```{r}
+
+#| echo: false
+ggplot(data=prop_tax, aes(Year,prop)) +
+    geom_col() 
+
+```
+
+
+# Question 2
+
+Plot on a single graph the average tax (in 2012 dollars) on cigarettes and the average price of a pack of cigarettes from 1970 to 2018.
+
+```{r}
+
+
+ggplot(data = avgs, aes(avg_tax, avg_cost)) +
+    geom_point()
+
+```
+
+
+# Question 3
+
+Identify the 5 states with the highest increases in cigarette prices (in dollars) over the time period. Plot the average number of packs sold per capita for those states from 1970 to 2018.
+
+```{r}
+
+head(top5, 5)
+
+ggplot(change, aes(Year, avg_sale)) +
+    geom_line()
+
+```
+
+
+# Question 4
+
+Identify the 5 states with the lowest increases in cigarette prices over the time period. Plot the average number of packs sold per capita for those states from 1970 to 2018.
+
+```{r}
+
+head(low5, 5)
+
+ggplot(change2, aes(Year, avg_sale)) +
+    geom_line()
+
+```
+
+
+# Question 5
+
+Compare the trends in sales from the 5 states with the highest price increases to those with the lowest price increases.
+
+**response:**
+
+
+# Question 6
+
+Focusing only on the time period from 1970 to 1990, regress log sales on log prices to estimate the price elasticity of demand over that period. Interpret your results.
+
+```{r}
+
+summary(ols1)
+
+```
+
+# Question 7
+
+Again limiting to 1970 to 1990, regress log sales on log prices using the total (federal and state) cigarette tax (in dollars) as an instrument for log prices. Interpret your results and compare your estimates to those without an instrument. Are they different? If so, why?
+
+```{r}
+
+summary(step2)
+
+```
+
+
+# Question 8
+
+Show the first stage and reduced-form results from the instrument.
+
+```{r}
+
+summary(step1)
+
+summary(step2)
+
+```
+
+
+# Question 9 
+
+Repeat questions 1-3 focusing on the period from 1991 to 2015.
+
+*OLS estimates*
+```{r}
+
+summary(ols2)
+
+```
+
+
+*IV estimates*
+```{r}
+
+summary(step4)
+
+```
+
+
+*2SLS estimates*
+```{r}
+
+summary(step3)
+summary(step4)
+
+```
+
+
+# Question 10 
+
+Compare your elasticity estimates from 1970-1990 versus those from 1991-2015. Are they different? If so, why?
+
+**response:**
