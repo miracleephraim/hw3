@@ -35,7 +35,7 @@ Plot on a single graph the average tax (in 2012 dollars) on cigarettes and the a
 
 ```{r}
 
-
+#| echo: false
 ggplot(data = avgs, aes(avg_tax, avg_cost)) +
     geom_point()
 
@@ -47,6 +47,15 @@ ggplot(data = avgs, aes(avg_tax, avg_cost)) +
 Identify the 5 states with the highest increases in cigarette prices (in dollars) over the time period. Plot the average number of packs sold per capita for those states from 1970 to 2018.
 
 ```{r}
+
+#| echo: false
+
+top5 <- df %>%
+    filter(Year == 1970 | Year == 2018) %>%
+    group_by(state) %>%
+    summarise(diff = cost_per_pack - lag(cost_per_pack)) %>%
+    filter(!is.na(diff)) %>%
+    arrange(desc(diff))
 
 head(top5, 5)
 
@@ -62,6 +71,15 @@ Identify the 5 states with the lowest increases in cigarette prices over the tim
 
 ```{r}
 
+#| echo: false
+
+low5 <- df %>%
+    filter(Year == 1970 | Year == 2018) %>%
+    group_by(state) %>%
+    summarise(diff = cost_per_pack - lag(cost_per_pack)) %>%
+    filter(!is.na(diff)) %>%
+    arrange(diff) 
+
 head(low5, 5)
 
 ggplot(change2, aes(Year, avg_sale)) +
@@ -74,7 +92,8 @@ ggplot(change2, aes(Year, avg_sale)) +
 
 Compare the trends in sales from the 5 states with the highest price increases to those with the lowest price increases.
 
-**response:**
+
+Amongst states with the highest prices, there has been a overall decrease in the average sales of cigarrettes in the last few decades. While states with the lowest prices also have seen an overall decrease, sales following significant moments where there significant drops in price are much higher than similar moments in the top 5 states. 
 
 
 # Question 6
@@ -87,6 +106,10 @@ summary(ols1)
 
 ```
 
+
+On average, quantity demanded decreases by 17% for every 1% increase in price.
+
+
 # Question 7
 
 Again limiting to 1970 to 1990, regress log sales on log prices using the total (federal and state) cigarette tax (in dollars) as an instrument for log prices. Interpret your results and compare your estimates to those without an instrument. Are they different? If so, why?
@@ -96,6 +119,9 @@ Again limiting to 1970 to 1990, regress log sales on log prices using the total 
 summary(step2)
 
 ```
+
+
+With a coefficient of 0.5, we can say price of cigarettes is inelastic, with a 1% increase in price leading to only a 0.5% change in quantity demanded. These are quite different from the OLS estimates of elasticity, likely due to the endogeneity present in the OLS model. 
 
 
 # Question 8
@@ -122,6 +148,8 @@ summary(ols2)
 
 ```
 
+As price increases by 1%, quantity demanded decreases by 66%.
+
 
 *IV estimates*
 ```{r}
@@ -129,6 +157,8 @@ summary(ols2)
 summary(step4)
 
 ```
+
+With a coefficient of -0.8, we can say price of cigarettes is inelastic, with a 1% increase in price leading to only a 0.8% change in quantity demanded. These are different from the OLS estimates of elasticity as well, but not as stark of a contrast from the OLS estimates.
 
 
 *2SLS estimates*
@@ -144,4 +174,4 @@ summary(step4)
 
 Compare your elasticity estimates from 1970-1990 versus those from 1991-2015. Are they different? If so, why?
 
-**response:**
+The estimates from each 20-year period are different from eachother, likely due to changes in attitudes around smoking and the increasing taxes placed on the product. 
