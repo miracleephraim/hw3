@@ -138,7 +138,7 @@ summary(step2)
 # intercept = 0.50
 
 
-# question 7
+# question 9
 
 # regular OLS
 ols2 <- lm(log_sales ~ log_cost, data = (df %>% filter(Year >= 1991 & Year <= 2015)))
