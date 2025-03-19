@@ -158,4 +158,4 @@ summary(step4)
 
 # intercept = -0.81
 
-save.image("C:/Users/mirac/Documents/GitHub/econ470_ma/hw3/submission1/results/hw_workspace.Rdata")
+save.image("C:/Users/mirac/Documents/GitHub/econ470_ma/hw3/submission2/results/hw_workspace.Rdata")

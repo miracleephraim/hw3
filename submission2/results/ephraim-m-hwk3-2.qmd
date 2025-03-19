@@ -18,7 +18,7 @@ pacman::p_load(tidyverse, ggplot2, dplyr, lubridate, stringr, readxl, data.table
 
 library(readr)
 
-load("C:/Users/mirac/Documents/GitHub/econ470_ma/hw3/submission1/results/hw_workspace.Rdata")
+load("C:/Users/mirac/Documents/GitHub/econ470_ma/hw3/submission2/results/hw_workspace.Rdata")
 
 ```
 
@@ -26,7 +26,7 @@ load("C:/Users/mirac/Documents/GitHub/econ470_ma/hw3/submission1/results/hw_work
 
 Present a bar graph showing the proportion of states with a change in their cigarette tax in each year from 1970 to 1985.
 
-```{r}
+```{r, echo=FALSE}
 
 #| echo: false
 ggplot(data=prop_tax, aes(Year,prop)) +
@@ -181,3 +181,5 @@ summary(step4)
 Compare your elasticity estimates from 1970-1990 versus those from 1991-2015. Are they different? If so, why?
 
 The estimates from each 20-year period are different from eachother, likely due to changes in attitudes around smoking and the increasing taxes placed on the product. 
+
+**Github Repo:** [https://github.com/miracleephraim/hw3.git] (https://github.com/miracleephraim/hw3.git)
