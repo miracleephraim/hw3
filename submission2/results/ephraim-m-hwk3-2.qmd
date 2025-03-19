@@ -28,7 +28,7 @@ Present a bar graph showing the proportion of states with a change in their ciga
 
 ```{r, echo=FALSE}
 
-#| echo: false
+
 ggplot(data=prop_tax, aes(Year,prop)) +
     geom_col() 
 
