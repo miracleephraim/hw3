@@ -1,0 +1,173 @@
+---
+title: HW3
+author: Miracle Ephraim
+format:
+  pdf:
+    documentclass: article
+---
+
+```{r setup, include=FALSE}
+
+
+# install.packages("readr")
+# install.packages("knitr")
+# install.packages("rmarkdown")
+# install.packages("stargazer")
+# install.packages("fixest")
+if (!require("pacman")) install.packages("pacman")
+pacman::p_load(tidyverse, ggplot2, dplyr, lubridate, stringr, readxl, data.table, gdata)
+
+library(stargazer)
+library(readr)
+library(modelsummary)
+library(fixest)
+
+load("C:/Users/mirac/Documents/GitHub/econ470_ma/hw3/submission3/results/hw_workspace1.Rdata")
+
+```
+
+# Question 1
+
+Present a bar graph showing the proportion of states with a change in their cigarette tax in each year from 1970 to 1985.
+
+```{r, echo=FALSE}
+
+
+ggplot(data=prop_tax, aes(Year,prop)) +
+    geom_col() 
+
+```
+
+
+# Question 2
+
+Plot on a single graph the average tax (in 2012 dollars) on cigarettes and the average price of a pack of cigarettes from 1970 to 2018.
+
+```{r, echo=FALSE}
+
+#| echo: false
+ggplot() +
+geom_line(data = avgs2, aes(Year, avg_tax), color = "blue") +
+geom_line(data = avgs2, aes(Year, avg_cost), color = "light blue") 
+
+```
+
+
+# Question 3
+
+Identify the 5 states with the highest increases in cigarette prices (in dollars) over the time period. Plot the average number of packs sold per capita for those states from 1970 to 2018.
+
+```{r, echo=FALSE}
+
+#| echo: false
+
+top5_a <- df %>%
+    filter(Year == 1970 | Year == 2018) %>%
+    group_by(state) %>%
+    summarise(diff = price_cpi - lag(price_cpi)) %>%
+    filter(!is.na(diff)) %>%
+    arrange(desc(diff))
+
+head(top5_a, 5)
+
+ggplot(df %>% filter(state_abb == c("NY", "HI", "DC", "RI", "MA")), aes(Year, sales_per_capita, colour = state)) +
+geom_line() 
+
+
+
+```
+
+
+# Question 4
+
+Identify the 5 states with the lowest increases in cigarette prices over the time period. Plot the average number of packs sold per capita for those states from 1970 to 2018.
+
+```{r, echo=FALSE}
+
+#| echo: false
+
+low5 <- df %>%
+    filter(Year == 1970 | Year == 2018) %>%
+    group_by(state) %>%
+    summarise(diff = cost_per_pack - lag(cost_per_pack)) %>%
+    filter(!is.na(diff)) %>%
+    arrange(diff) 
+
+head(low5, 5)
+
+ggplot(df %>% filter(state_abb == c("MO", "ND", "TN", "GA", "NC")), aes(Year, sales_per_capita, colour = state)) +
+geom_line() 
+
+```
+
+
+# Question 5
+
+Compare the trends in sales from the 5 states with the highest price increases to those with the lowest price increases.
+
+In states with higher prices, average sales decrease at a much faster rate compared to states where prices are lower.All states with high prices see sales per capita drop below 50 by the early 2000s, while states with lower reach that point by the end of follow-up (2018). These findings demonstrate the significant effect price has on cigarette sales, and are a good means of dissauding their use amongst the general population. 
+
+# Question 6 - 9
+
+**OLS + IV Estimates**
+
+```{r, echo=FALSE}
+
+modelsummary(
+  list("OLS (1970-1990)" = ols1,
+       "IV (1970-1990)" = step2,
+       "OLS (1991-2015)" = ols2,
+       "IV (1991-2015)" = step4),
+  output = "markdown",
+  title = "Table 1: Elasticity Estimates from OLS and IV",
+  coef_omit = "Intercept",
+  gof_map = list(
+    list("raw" = "nobs", "clean" = "N", "fmt" = 0),
+    list("raw" = "r.squared", "clean" = "R²", "fmt" = 2)
+  )
+)
+
+```
+
+
+OLS (1970 to 1990)
+On average, quantity demanded decreases by .02% for every 1% increase in price.
+
+IV (1970 to 1990)
+With a coefficient of -0.79, we can say price of cigarettes is inelastic, with a 1% increase in price leading to only -0.79 change in quantity demanded. These are quite different from the OLS estimates of elasticity, likely due to the endogeneity present in the OLS model. 
+
+
+OLS (1990 to 2015)
+As price increases by 1%, quantity demanded decreases by .01%.
+
+IV (1990 to 2015)
+
+With a coefficient of -1.15, we can say price of cigarettes is inelastic, with a 1% increase in price leading to a -1.15% change in quantity demanded. These are different from the OLS estimates of elasticity as well, but not as stark of a contrast from the OLS estimates.
+
+
+
+**Reduced Form**
+```{r, echo=FALSE}
+
+modelsummary(
+  list("Reduced Form (1970-1990)" = rf,
+       "Reduced Form (1991-2015)" = rf2),
+  output = "markdown",
+  title = "Table 2: Reduced Form Estimates",
+  coef_omit = "Intercept",
+  gof_map = list(
+    list("raw" = "nobs", "clean" = "N", "fmt" = 0),
+    list("raw" = "r.squared", "clean" = "R²", "fmt" = 2)
+  )
+)
+
+```
+
+
+# Question 10 
+
+Compare your elasticity estimates from 1970-1990 versus those from 1991-2015. Are they different? If so, why?
+
+The estimates from each 20-year period are different from eachother, likely due to changes in attitudes around smoking and the increasing taxes placed on the product. 
+
+**Github Repo:** [https://github.com/miracleephraim/hw3.git] (https://github.com/miracleephraim/hw3.git)

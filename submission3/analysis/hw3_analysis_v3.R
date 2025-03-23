@@ -1,10 +1,16 @@
 # analysis
 
+install.packages("stargazer")
 install.packages("modelsummary")
+install.packages("fixest")
 if (!require("pacman")) install.packages("pacman")
 pacman::p_load(tidyverse, ggplot2, dplyr, lubridate, stringr, readxl, data.table, gdata)
 library(readr)
 library(modelsummary)
+library(knitr)
+library(stargazer)
+library(fixest)
+
 
 df <- read_rds("C:/Users/mirac/Documents/GitHub/econ470_ma/hw3/data/output/TaxBurden_Data.rds")
 
@@ -60,7 +66,7 @@ change_a <- df %>%
     summarise(avg_sale = mean(sales_per_capita, na.rm = TRUE))
 
 # graph - change in sales, grouped by state
-ggplot(df %>% filter(state_abb == c("NY", "HI", "DC", "RI", "MA")), aes(Year, sales_per_capita, colour = state)) +
+ggplot(df %>% filter(state_abb == c("NY", "CT", "DC", "RI", "MA")), aes(Year, sales_per_capita, colour = state)) +
 geom_line() 
 
 
@@ -100,6 +106,8 @@ df <- df %>%
             log_total_tax=log(total_tax_cpi),                             
             log_state_tax=log(tax_cpi))
 
+# Question 7-8
+
 # regular OLS
 ols1 <- lm(log_sales ~ log_cpi, data = (df %>% filter(Year >= 1970 & Year <= 1990)))
 summary(ols1)
@@ -113,6 +121,9 @@ step2 <- lm(log_sales ~ pricehat, data=(
     df %>% filter(Year >= 1970 & Year <= 1990)))
 summary(step2)
 
+# reduced form
+rf <- feols(log_sales ~ log_total_tax, data=(df %>% filter(Year >= 1970 & Year <= 1990)))
+summary(rf)
 # question 9
 
 # regular OLS
@@ -128,23 +139,10 @@ step4 <- lm(log_sales ~ pricehat, data=(
     df %>% filter(Year >= 1991 & Year <= 2015)))
 summary(step4)
 
-modelsummary(
-    list("OLS (1970-1990)" = ols1,
-         "IV (1970-1990)" = step2,
-         "OLS (1991-2015)" = ols2,
-         "IV (1991-2015)" = step4),
-    output = "latex",
-    title = "Table 1: Elasticity Estimates from OLS and IV",
-    coef_omit = "Intercept",
-    gof_map = list(
-        list("raw" = "nobs", "clean" = "N", "fmt" = 0),
-        list("raw" = "r.squared", "clean" = "R²", "fmt" = 2)
-    )
-)
+rf2 <- feols(log_sales ~ log_total_tax, data=(df %>% filter(Year >= 1991 & Year <= 2015)))
+summary(rf2)
 
-kable_styling(latex_options = "hold_position")
-
-save.image("C:/Users/mirac/Documents/GitHub/econ470_ma/hw3/submission2/results/hw_workspace.Rdata")
+save.image("C:/Users/mirac/Documents/GitHub/econ470_ma/hw3/submission3/results/hw_workspace1.Rdata")
 
 
 # As we come into a more recent time period, cigarettes appear to be more responsive to changes in price. Bulk of variation in instrumented model is explained by the instrument.
